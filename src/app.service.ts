@@ -1,12 +1,16 @@
+import { Cache } from '@nestjs/cache-manager';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
+  constructor(private readonly cacheManager: Cache) { }
 
-  sayHello(name): string {
-    return 'Hello' + name;
+  async getHello() {
+    await this.cacheManager.set('cached_item', { key: 32 });
+    await this.cacheManager.del('cached_item')
+    await this.cacheManager.set('cached_item', "Emre")
+    const cachedItem = await this.cacheManager.get('cached_item')
+    console.log("Önbellekdeki data", { message: "Önbellekden veri geldi", data: cachedItem })
+    return 'Hello World!';
   }
 }
